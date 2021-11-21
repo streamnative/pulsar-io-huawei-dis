@@ -41,13 +41,12 @@ Before using the DIS sink connector, you need to create a configuration file thr
 * YAML
 
     ```yaml
-    {
-        region: cn-north-4
-        disEndpoint: https://dis.cn-north-4.myhuaweicloud.com
-        projectId: fakeProjectId
-        ak: fakeAK
-        sk: fakeSK
-        streamId: fakeStreamId
-        streamName: fakeStreamName
-    }
+    configs:
+        region: "cn-north-4"
+        disEndpoint: "https://dis.cn-north-4.myhuaweicloud.com"
+        projectId: "fakeProjectId"
+        ak: "fakeAK"
+        sk: "fakeSK"
+        streamId: "fakeStreamId"
+        streamName: "fakeStreamName"
     ```
