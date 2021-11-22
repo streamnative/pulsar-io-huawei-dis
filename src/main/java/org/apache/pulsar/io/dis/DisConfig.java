@@ -50,7 +50,7 @@ public class DisConfig implements Serializable {
     @FieldDoc(required = true, defaultValue = "", help = "User AK")
     private String ak;
 
-    @FieldDoc(required = true, defaultValue = "", help = "User SK")
+    @FieldDoc(required = true, sensitive = true, defaultValue = "", help = "User SK")
     private String sk;
 
     @FieldDoc(required = true, defaultValue = "", help = "Id of the DIS stream")
