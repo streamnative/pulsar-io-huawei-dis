@@ -18,8 +18,9 @@
  */
 package org.apache.pulsar.io.dis;
 
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
