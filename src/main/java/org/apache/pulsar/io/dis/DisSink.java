@@ -26,6 +26,7 @@ import com.huaweicloud.dis.iface.data.request.PutRecordsRequest;
 import com.huaweicloud.dis.iface.data.request.PutRecordsRequestEntry;
 import com.huaweicloud.dis.iface.data.response.PutRecordsResult;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.functions.api.Record;
 import org.apache.pulsar.io.core.Sink;
 import org.apache.pulsar.io.core.SinkContext;
@@ -62,6 +63,11 @@ public class DisSink implements Sink<byte[]> {
 
     @Override
     public void write(Record<byte[]> record) throws Exception {
+        if (!record.getMessage().isPresent()) {
+            record.ack();
+            return;
+        }
+        Message<byte[]> message = record.getMessage().get();
         final PutRecordsRequest putRecordsRequest = new PutRecordsRequest();
         putRecordsRequest.setStreamId(streamId);
         putRecordsRequest.setStreamName(streamName);
@@ -69,8 +75,11 @@ public class DisSink implements Sink<byte[]> {
         if (record.getKey().isPresent()) {
             putRecordsRequestEntry.setPartitionKey(record.getKey().get());
         }
-        putRecordsRequestEntry.setData(ByteBuffer.wrap(record.getValue()));
+        putRecordsRequestEntry.setData(ByteBuffer.wrap(message.getValue()));
         putRecordsRequest.setRecords(Collections.singletonList(putRecordsRequestEntry));
+        if (log.isDebugEnabled()) {
+            log.debug("begin to send dis message id is {}", message.getMessageId());
+        }
         disAsync.putRecordsAsync(putRecordsRequest, new AsyncHandler<PutRecordsResult>() {
             @Override
             public void onError(Exception exception) throws Exception {
@@ -80,6 +89,9 @@ public class DisSink implements Sink<byte[]> {
 
             @Override
             public void onSuccess(PutRecordsResult putRecordsResult) throws Exception {
+                if (log.isDebugEnabled()) {
+                    log.debug("send dis success message id is {}", message.getMessageId());
+                }
                 record.ack();
             }
         });
